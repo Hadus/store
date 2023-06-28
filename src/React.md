@@ -1,18 +1,18 @@
-# React
+# React介绍
 
 - 只实现了从state视图的数据单向绑定，未实现双向绑定
 - 要实现从页面到state必须手动触发onChange方法，在方法内更新state，state改变了会自动刷新视图
 
-## webpack 4.x
+# webpack 4.x
 
-###  下载
+##  下载
 
 `npm install webpack webpack-cli`
 
 - **webpack ：**核心
 - **webpack-cli：** 打包命令（4.x后命令被单独放在webpack-cli）
 
-### 配置
+## 配置
 
 - 约定大于配置
   + 指定默认 en [vue.html](../../06.拓展复习/02.webpack+vue/vue.html) try 文件为 /src/index.js
@@ -48,6 +48,8 @@ module.exports = {
   }
 }
 ```
+
+# 传统React
 
 ## 安装
 
@@ -354,76 +356,17 @@ static contextTypes = {
 this.context.msg
 ```
 
-## react-router-dom
+## ref：尽量是用ref而不是通过选择器获取元素
 
-- npm install react-router-dom -D
-
-### 导入
-
-```jsx
-// 2个Router：路由根容器元素，包含所有路由，一个项目只出现一次，只能包含一个元素
-	// BrowserRouter(/a/b):使用H5 history API，不兼容IE9以下，刷新state不会消失
-	// HashRouter(/#/a/b):使用URL，刷新state会消失，
-// Link：匹配路由链接
-// NavLink:Link升级版,active='active',被点击会自动加类名，默认家‘active’
-// Route：既是路由规则，又是占位符
-// Switch:匹配到路由不再向下匹配
-// Redirect:没匹配上时，redirect
-import {BrowserRouter,HashRouter,Route,Link,NavLink,Switch,Redirect} from 'react-router-dom'
-import {withRouter} from 'react-router-dom'
-// withRouter:function,高阶组件，提供路由API给普通组件 export default withRouter(Header)
-class App extends React.component{
-  render() {
-    return  (
-      // 启用路由
-  		<HashRouter>
-     		<div></div>
-    	</HashRouter>
-  	)
-  }
-}
-        
-// Link：路由链接
-	// to: 路由链接
-	// exact：开启严格模式，一般不用，而是用<switch>
-	// replace：Boolean，没有历史记录，直接替换当前的路由历史
-// exact 启用精确匹配
-<Link to="/home">首页</Link>
-<Route path="/movie?name=tom&id=1" component={Home} exact></Route>
-// 1.search 传参：this.props.location.search
-// <Link to="/home">首页</Link>
-<Route path="/movie" component={movie} exact></Route>
-// 2.params 传参：this.props.match.params
-// <Link to="/home/dd/1">首页</Link>
-<Route path="/music/:name/:id" component={music} exact></Route>
-// 3.state 传参(不显示在地址栏)：this.props.location.state
-// 注意：BroserRoute的话页面刷新数据还在,但清空缓存就消失，HashRoute会消失
-// <Link to={{pathname:'/book',state:{name:'dd',id:1}}}>首页</Link>
-<Route path="/book" component={book} exact></Route>
-<Redirect to="/home" /> 
+```html
+<Hello ref="hello">
+  我是一个h3
+</Hello>
 ```
 
-### 方法
-
-- history.go(n)
-- history.goForward()
-- history.goBackward()
-- history.push(to, state)
-- history.replace(to, state)
-
-## redux 状态管理
-
-> Redux 支持 React、Angular、Ember、jQuery 甚至纯 JavaScript。
->
-> Redux 和 React 之间没有关系。
-
-> flux也是状态管理器，redux借鉴了很多flux的东西，但是在flux上优化并提升了很多方法，flux已经承认redux，所以flux已经处于被淘汰的状态
-
-> 创建一个公共仓储 store 来统一管理组建之间需要公用的数据
->
-> redux提供单一数据源
->
-> redux开始加载回默认出发一次reducer，来初始化store中的state树 
+```javascript
+this.refs.hello.innerHTML;
+```
 
 ## 组件懒加载
 
@@ -512,9 +455,151 @@ render(){
 
 
 
-## react-redux
+## 高阶组件
 
-### 基本流程
+- 是一个函数，而不是组件
+- 接收一个组件 oldCompt 作为参数，返回一个新组件 newCompt，并将传入的组件在其内部渲染
+- 虽然看起来没什么区别，但可以在 newCompt 启动时候做一些启动前的工作
+
+```js
+export default (oldCompt,name)=>{
+  class newCompt extends Component{
+    contructor(props){
+      super(props)
+    }
+    render(){
+      return <oldCompt data={name} />
+    }
+  }
+    return newCompt
+}
+```
+
+## 类的属性及方法
+
+```jsx
+class Person extend React.component{
+  constructor(props){
+    super(props)
+    this.state = {name:1}
+    this.handleClick = this.handleClick.bind(this)
+  }
+  handleClick(){
+    
+  }
+  render(){
+    return (
+    	<button onClick={handleClick}>button</button>
+    )
+  }
+}
+```
+
+这段代码相当于
+
+```jsx
+class Person extend React.component{
+  state = {name:1}; // 直接在类里面赋值的变量会挂在到类的构造器上
+  handleClick=()=>{ // 方法也是
+    
+  }
+  render(){
+    return (
+    	<button onClick={handleClick}>button</button>
+    )
+  }
+}
+```
+
+
+
+## render函数的return中必须是一个根组件，如果并列关系
+
+```html
+<>
+<div>
+  1
+</div>
+<div>
+  2
+</div>
+</>
+```
+
+# react-router-dom
+
+- npm install react-router-dom -D
+
+## 导入
+
+```jsx
+// 2个Router：路由根容器元素，包含所有路由，一个项目只出现一次，只能包含一个元素
+	// BrowserRouter(/a/b):使用H5 history API，不兼容IE9以下，刷新state不会消失
+	// HashRouter(/#/a/b):使用URL，刷新state会消失，
+// Link：匹配路由链接
+// NavLink:Link升级版,active='active',被点击会自动加类名，默认家‘active’
+// Route：既是路由规则，又是占位符
+// Switch:匹配到路由不再向下匹配
+// Redirect:没匹配上时，redirect
+import {BrowserRouter,HashRouter,Route,Link,NavLink,Switch,Redirect} from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
+// withRouter:function,高阶组件，提供路由API给普通组件 export default withRouter(Header)
+class App extends React.component{
+  render() {
+    return  (
+      // 启用路由
+  		<HashRouter>
+     		<div></div>
+    	</HashRouter>
+  	)
+  }
+}
+        
+// Link：路由链接
+	// to: 路由链接
+	// exact：开启严格模式，一般不用，而是用<switch>
+	// replace：Boolean，没有历史记录，直接替换当前的路由历史
+// exact 启用精确匹配
+<Link to="/home">首页</Link>
+<Route path="/movie?name=tom&id=1" component={Home} exact></Route>
+// 1.search 传参：this.props.location.search
+// <Link to="/home">首页</Link>
+<Route path="/movie" component={movie} exact></Route>
+// 2.params 传参：this.props.match.params
+// <Link to="/home/dd/1">首页</Link>
+<Route path="/music/:name/:id" component={music} exact></Route>
+// 3.state 传参(不显示在地址栏)：this.props.location.state
+// 注意：BroserRoute的话页面刷新数据还在,但清空缓存就消失，HashRoute会消失
+// <Link to={{pathname:'/book',state:{name:'dd',id:1}}}>首页</Link>
+<Route path="/book" component={book} exact></Route>
+<Redirect to="/home" /> 
+```
+
+## 方法
+
+- history.go(n)
+- history.goForward()
+- history.goBackward()
+- history.push(to, state)
+- history.replace(to, state)
+
+# redux 状态管理
+
+> Redux 支持 React、Angular、Ember、jQuery 甚至纯 JavaScript。
+>
+> Redux 和 React 之间没有关系。
+
+> flux也是状态管理器，redux借鉴了很多flux的东西，但是在flux上优化并提升了很多方法，flux已经承认redux，所以flux已经处于被淘汰的状态
+
+> 创建一个公共仓储 store 来统一管理组建之间需要公用的数据
+>
+> redux提供单一数据源
+>
+> redux开始加载回默认出发一次reducer，来初始化store中的state树 
+
+# react-redux
+
+## 基本流程
 
 - 创建一个用于处理数据 state 更新的 reducer，reducer 是一个描述和处理如何更新数据 state 的纯函数
 
@@ -628,7 +713,7 @@ construct(props){
   - 5 store 的数据 state 发生改变，但组件中的 state 并未改变，被调用的订阅者 listener 来重新更新组件
   - 6 通过 step2 中返回的方法  unsubscribe 注销订阅者
 
-### 项目中的优化技巧
+## 项目中的优化技巧
 
 1. action 中的 type 一般都单独抽离：`actionTypes.js`文件中导出常量
    1. 方便维护，复用性强
@@ -639,7 +724,7 @@ construct(props){
    2. UI state：决定页面显示的状态，例如：受控组件，弹窗
    3. App state：是否loading，路由
 
-### react-redux
+## react-redux
 
 > 统一解决redux的监听 subscribe 和取消监听 unsubscribe
 >
@@ -743,104 +828,130 @@ const store = createrStore(reducer, applyMiddleware(thunk))
 
 
 
-## 其他
+# React-hooks：React17
 
-### 类的属性及方法
+- 纯函数
+- 性能更高
+- 使用更方便
+- 没有生命周期函数
 
-```jsx
-class Person extend React.component{
-  constructor(props){
-    super(props)
-    this.state = {name:1}
-    this.handleClick = this.handleClick.bind(this)
-  }
-  handleClick(){
-    
-  }
-  render(){
-    return (
-    	<button onClick={handleClick}>button</button>
-    )
-  }
+## useState--自变量--定义变量
+
+```
+let [age, setAge] = useState(1)
+setAge(2)
+setAge((oldValue) => {
+	return oldValue++
+})
+```
+
+## useEffect--有副作用因变量--处理：对state处理尽量放在这里
+
+- 代替常用生命周期函数在 componentDidMount&componentDidUpdate
+- 解绑，使用第二个参数，当第二个参数才执行
+- 异步执行，所以不能执行同步实时的操作，比如改变浏览器更新视图
+- 处理副作用的不确定的因变量
+- 比如，拿到数据之后，根据数据更新视图
+- dependencies
+  - 不传：第一次渲染以及每次更新渲染后都执行
+  - 空数组：第一次渲染后执行一次
+  - 非空数组：传入数据第一次渲染以及每次更新渲染后都执行
+
+
+```js
+useEffect(setupfn, [dependencies]?)
+setupfn(){
+      执行副作用
+      return ()=>{
+  				清除副作用
+			}
 }
 ```
 
-这段代码相当于
+## useReducer--自变量--合并多个state
 
-```jsx
-class Person extend React.component{
-  state = {name:1}; // 直接在类里面赋值的变量会挂在到类的构造器上
-  handleClick=()=>{ // 方法也是
-    
-  }
-  render(){
-    return (
-    	<button onClick={handleClick}>button</button>
-    )
-  }
+- 使用 redux 的理念，将多个 state 合并为一个
+
+## useCallback--无副作用因变量--缓存方法因变量
+
+```js
+import { useCallback } from 'react';
+
+export default function ProductPage({ productId, referrer, theme }) {
+  const handleSubmit = useCallback((orderDetails) => {
+    post('/product/' + productId + '/buy', {
+      referrer,
+      orderDetails,
+    });
+  }, [productId, referrer]);
+```
+
+## useContext--自变量--上下文
+
+- 只能在一个文件中？
+
+```js
+// 父组件
+const ThemeContext = createContext(null);
+function MyPage() {
+  return (
+    <ThemeContext.Provider value="dark">
+      <Form />
+    </ThemeContext.Provider>
+  );
+}
+
+// 子组件
+import { useContext } from 'react';
+
+function MyComponent() {
+  const theme = useContext(ThemeContext);
+  // ...
+```
+
+## useMemo--无副作用因变量--缓存因变量--类似计算属性
+
+- 只要dependencies不变，始终取的缓存的值
+- 每次组件更新都会取新值
+
+```js
+import { useMemo } from 'react';
+
+function TodoList({ todos, tab }) {
+  // calculateValue
+  const cachedValue = useMemo(calculateValue, [dependencies])
 }
 ```
 
+## useRef--标记变量
 
+- 自变量与视图之间进行一些操作时，需要的标记
+- 比如标记DOM
 
-### render函数的return中必须是一个根组件，如果并列关系
+```js
+const ref = useRef(initialValue)
+const handleClick = ()=>{
+  ref.current.innerHTML = '';
+}
 
-```html
-<>
-<div>
-  1
-</div>
-<div>
-  2
-</div>
-</>
+return (
+	<div ref={ref}></div>
+	<button onClick={handleClick}></button>
+)
 ```
 
+## 自定义 hooks--就是mixin
 
+# 其他
 
-### ref：尽量是用ref而不是通过选择器获取元素
-
-```html
-<Hello ref="hello">
-  我是一个h3
-</Hello>
-```
-
-```javascript
-this.refs.hello.innerHTML;
-```
-
-### 修改this指向的方式：bind | call/apply
+## 修改this指向的方式：bind | call/apply
 
 - bind的返回值：改变了this指向后的函数的拷贝
 - bind并不会改变原函数的this，只是改变了拷贝函数的this
 - bind 只修改this指向，不立即调用，call/apply不仅修改指向，并立即调用
 - bind(this,param,param...) 第一个参数是this，后面为传入函数内部的参数
 
-###  在promise中return另一个promise才能继续 .then
-
-### 高阶组件
-
-- 是一个函数，而不是组件
-- 接收一个组件 oldCompt 作为参数，返回一个新组件 newCompt，并将传入的组件在其内部渲染
-- 虽然看起来没什么区别，但可以在 newCompt 启动时候做一些启动前的工作
-
-```js
-export default (oldCompt,name)=>{
-  class newCompt extends Component{
-    contructor(props){
-      super(props)
-    }
-    render(){
-      return <oldCompt data={name} />
-    }
-  }
-    return newCompt
-}
-```
-
-
-
+##  在promise中return另一个promise才能继续 .then
 
 
 
