@@ -32,6 +32,14 @@
     ],
     "description": "js notes"
   },
+  "annr": {
+    "scope": "javascript,typescript,jsx",
+    "prefix": "annr",
+    "body": [
+      "{/* $1 */}",
+    ],
+    "description": "js notes"
+  },
   "cl": {
     "scope": "javascript,typescript,jsx",
     "prefix": "cl",
@@ -92,7 +100,7 @@
     "scope": "javascript,typescript",
     "prefix": "exf",
     "body": [
-      "export function ${1:fn}($2){",
+      "export function ${1:fn}($2) {",
       "  $3",
       "}",
     ],
@@ -170,7 +178,7 @@
     "scope": "javascript,typescript",
     "prefix": "fori",
     "body": [
-      "for(let ${1:i} = 0; ${1:i} < ${2:${3:lis}.length}; ${1:i}++){",
+      "for(let ${1:i} = 0; ${1:i} < ${2:${3:lis}.length}; ${1:i}++) {",
       "  $4",
       "}"
     ],
@@ -180,7 +188,7 @@
     "scope": "javascript,typescript",
     "prefix": "forin",
     "body": [
-      "for(let ${1:k} in ${2:obj}){",
+      "for(let ${1:k} in ${2:obj}) {",
       "  $3",
       "}"
     ],
