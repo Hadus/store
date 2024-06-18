@@ -831,9 +831,50 @@ const store = createrStore(reducer, applyMiddleware(thunk))
 # React-hooks：React17
 
 - 纯函数
+
 - 性能更高
+
 - 使用更方便
-- 没有生命周期函数
+
+- 没有生命周期函数---模拟生命周期
+
+  ```js
+  // useComponentDidMount 组件-----
+  import React, { useEffect, useRef } from 'react';
+  function useComponentDidMount(callback) {
+    const isMounted = useRef(false);
+   
+    useEffect(() => {
+      isMounted.current = true;
+      return () => {
+        isMounted.current = false;
+      };
+    }, []);
+   
+    useEffect(() => {
+      if (isMounted.current) callback();
+    }, []);
+  }
+  export default useComponentDidMount;
+  
+  // 引入组件-----
+  import React from 'react';
+  import useComponentDidMount from './useComponentDidMount';
+  function MyComponent() {
+    useComponentDidMount(() => { // callback，组件被渲染时候执行
+      console.log('组件已挂载');
+    });
+    return (
+      <div>
+        My Component
+      </div>
+    );
+  }
+  export default MyComponent;
+  // 类似地，你可以创建 useComponentDidUpdate 和 useComponentWillUnmount 等 Hooks 来模拟其他的生命周期钩子。但是，请记住，在函数组件中，你应该使用 useEffect 来代替 componentDidMount、componentDidUpdate 和 componentWillUnmount 等生命周期钩子，因为 useEffect 可以同时处理挂载后和更新时的副作用。
+  ```
+
+  
 
 ## useState--自变量--定义变量
 
@@ -847,8 +888,8 @@ setAge((oldValue) => {
 
 ## useEffect--有副作用因变量--处理：对state处理尽量放在这里
 
-- 代替常用生命周期函数在 componentDidMount&componentDidUpdate
-- 解绑，使用第二个参数，当第二个参数才执行
+- 代替常用生命周期函数在 componentDidMount & componentDidUpdate & componentWillUnmount
+- 解绑，return
 - 异步执行，所以不能执行同步实时的操作，比如改变浏览器更新视图
 - 处理副作用的不确定的因变量
 - 比如，拿到数据之后，根据数据更新视图
@@ -871,6 +912,17 @@ setupfn(){
 ## useReducer--自变量--合并多个state
 
 - 使用 redux 的理念，将多个 state 合并为一个
+
+  ```js
+  const reducer = (value: number, action) => {
+      // 始终能访问到最新的 step 
+          return props.step + value
+  }
+  const [state, dispatch] = useReducer(reducer, value, [fn])
+  dispatch({type: 'changeStep',value: 0})
+  ```
+
+  
 
 ## useCallback--无副作用因变量--缓存方法因变量
 

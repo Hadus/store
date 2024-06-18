@@ -1197,6 +1197,22 @@ new Vue({
   
 - 9.路由动画，给路由加上`<transition></transition>`标签
 
+## hash路由和history路由
+
+1. Hash 路由
+
+   - 优点
+     1. 兼容性好
+     2. 页面流畅，不用刷新整个页面
+
+   - 缺点
+     1. 地址栏不美观，有#
+     2. 不利于SEO
+
+2. history
+
+   1. 支持pushState和replaceState API允许开发者直接更改前端路由，而不需要重新发起请求
+
 ## 配置路由
 ```javascript
 var obj_router = new VueRouter({
@@ -1840,7 +1856,7 @@ new Vue({
 ```javascript
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import {ref, reactive, computed, watch, watchEffect} from 'vue';
+import {ref, reactive, computed, watch, watchEffect, defineProps } from 'vue';
 export default{
     name: 'Demo',
   props: ['name', ' age'], // 接收父组件传递的属性
@@ -1858,6 +1874,20 @@ export default{
       name: 'Jocos',
       age: 18
     })
+    const props = defineProps({
+      minConsecutiveNumber: {
+        type: String,
+        required: true
+      },
+      teamsData: {
+        type: Object,
+        required: true
+      },
+      unFocusTeams: {
+        type: String,
+        required: true
+      },
+    });
 		// computed
     const fullName = computed(()=>{
       return firstName + '-' +lastName;
@@ -2186,7 +2216,7 @@ setup(){
 
 ## Fragment 组件：
 
-- Vue3中不是必须要根组件，是系统自动把没有跟标签的都放入Fragment标签中
+- Vue3中不是必须要根组件，是系统自动把没有根标签的都放入Fragment标签中
 
 ## Teleport 组件：在组件内部定义，将组件的内容传给外层
 
@@ -2367,6 +2397,64 @@ const store = useCounterStore()
 
 
 
+# TypeScript
+
+```typescript
+// 定义变量
+let n: number;
+let num: number = 1;
+let str: string = '';
+
+let arr: Array = [];
+let brr: string[]; let brr: Array<string>// 字符串数组
+// 元组:固定长度的数组
+let arr1: [number, number] = [1,2]
+
+let obj: object = {age: 10}
+let obj: {name: string, age?: number, [propName: string]: any}
+
+let a: any; let d;(默认为any)-----不建议使用,用它计算会关闭其他变量的类型检测
+let a: unknow-----用它计算不会关闭其他变量的类型检测
+
+// 枚举enum：处理数据需要key--value
+enum Gender{
+  male: 0, female:1
+}
+let g:Gender = Gender.male;
+
+// 运算符
+let gender: 'male'|'female';
+let a: number | string;
+
+// 定义函数变量
+function(a: number, b: string): number｜void{
+  
+}
+let fn(a:number) => number; 
+// 类型断言
+let e:unknow;
+e = '1';
+let a = e as string-----告诉编辑器 e 就是字符串
+
+// 抽象类--自定义obj类型，不能重复定义
+type type1{
+
+}
+
+// 接口--自定义的obj类型，重复定义取合集
+interface interface1{
+  
+}
+
+// 泛型：函数返回值不确定
+function fn<T>(a: T): T{} // <T>是定义，具体什么类型在执行时候才知道
+fn(10) // 默认泛型T=number
+fn<string>('') // 手动指定泛型T=string
+
+```
+
+
+
 # 其他
 
 ## node中的模块化
@@ -2416,10 +2504,6 @@ import obj_my1 {obj2 , obj4 as obj_my2} from 'index.js'
 - localStorage中只支持存放字符串
 - div.domObject.getBoundingClientRect() 获取元素到屏幕的四个距离
 
-## mint-ui： 基于vue的移动端组件库
-
-## MUI：类似于bootstrap，并不是基于vue的，更适合移动端
-
 ## selenium 工具可以自动操作浏览器
 
 1. 用于测试
@@ -2448,12 +2532,40 @@ import obj_my1 {obj2 , obj4 as obj_my2} from 'index.js'
 - vuex
 - 父子组件
   - props && $emit
-  - 父组件 $ref 拿到子组件
+  - 父组件 $refs 拿到子组件
   - this.$parent 拿到父组件
   - provide && inject
   - .async && update
+  - $context
   - $attrs && $listeners
     - 如果父组件传入的属性，子组件未在props中声明，孙组件就可以拿到
     - <grandchild v-bind="$attrs" v-on="$listeners"></grandchild>
-- 兄弟组件
+- 兄弟组件(vue3弃用)
   - eventBus
+
+## vue3 和vue2的区别
+
+1. 重写了vm，更新了虚拟dom的生命周期，优化了虚拟dom的运行时。加入了setup这个钩子函数
+
+2. 将之前的option api升级成现在的composition api，就是组合式API，让代码看起来更简洁优雅
+
+3. 优化了底层的diff算法
+
+4. 使用新的es规范中的proxy重写了数据拦截和绑定的底层逻辑，解决了之前vue2中引用类型数据存在的一些情况下无法检测到的数据更新
+
+5. 更新了一些内置方法，增加一些好用的api，teleport，fragments，provide/inject，suspense
+
+6. teleport就是一些自由组件，可以在任意子组件中定义，并制定它要渲染的父组件位置，甚至可以是body
+
+7. Fragments就是，vue3不需要写跟标签，vue3会将组件的所有标签直接放在一个fragment组件中
+
+8. Suspense用来解决组件懒加载过程中的闪烁问题，懒加载的组件没有加载完成时候会展示默认组件
+
+9. 其实在vue2的基础上更新了很多内容，和vue2不管在原理和写法上都有了重大更新，而且有很多的小的细节更新，但是兼容了vue2的写法，让我们使用者能比较平滑的过度
+
+10. diff算法
+
+11. watch：监听对象，监听对象的属性
+
+12. 1. deep
+    2. Immediate
