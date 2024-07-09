@@ -745,12 +745,13 @@ toolbarList:ToolbarItem[] = [
 // 绑定路由操作-类似与控制器
 	// 情况1: 当前组件直接调用
   // navPathStack: NavPathStack = new NavPathStack()
-	// 并在 Navigation(this.navPathStack) 中注入，即可在 navDestination 生命周期中通过 context 拿到
+	// 并在 Navigation(this.navPathStack) 中注入, 即可在 navDestination 生命周期中通过 context 拿到
 
 	// 情况2: 跨组件调用--包含情况1
   @Provide navPathStack: NavPathStack = new NavPathStack()
   // @Consume('navPathStack') navPathStack: NavPathStack
-
+	// 并在 Navigation(this.navPathStack) 中注入, 
+	// 即可在 navDestination 生命周期中通过 context 拿到，或者在 this.navPathStack 中拿
 
 // 三个区域
     // - 顶部 Top：title + menus
