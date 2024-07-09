@@ -708,7 +708,22 @@ Tabs({
 
 #### Navigation: 根组件
 
+1. Title：标题栏，通过title属性对标题栏进行设置。通过menus配置菜单
+2. NavContent：内容区域，默认首页显示导航内容（Navigation的子组件）或非首页显示（NavDestination的子组件），首页和非首页通过路由进行切换。
+3. ToolBar：工具栏，通过toolbarConfiguration实现对工具栏的配置，如果不配置此属性，ToolBar不显示。竖屏最多支持显示5个图标，多余的图标会被放入自动生成的更多图标。
+4. NavDestination：作为子页面的根容器，用于显示Navigation的内容区。具备两种类型：STANDARD（标准类型，NavDestination的生命周期跟随NavPathStack栈中标准NavDestination变化而改变），DIALOG（默认透明。不影响其他NavDestination的生命周期）。
+5. NavPathStack：Navigation路由栈，由于管理NavDestination组件的路由跳转。**推荐使用****NavPathStack****配合navDestination****属性进行页面路由。**
+
 ```ts
+// title
+@Builder NavTitleBuilder() {
+  Column() {
+    Text('Title')
+      .fontColor('#182431')
+      .fontSize(24)
+      .fontWeight(700)
+  }.alignItems(HorizontalAlign.Center)
+}
 // 自定义 menu 
 navigationMenusList:NavigationMenuItem[] = [
   {value: '', icon: '/assets/images/avatar.png', action: ()=>{}},
@@ -728,20 +743,27 @@ toolbarList:ToolbarItem[] = [
   ]
 
 // 绑定路由操作-类似与控制器
-  pageStack: NavPathStack = new NavPathStack()
+	// 情况1: 当前组件直接调用
+  // navPathStack: NavPathStack = new NavPathStack()
+	// 并在 Navigation(this.navPathStack) 中注入，即可在 navDestination 生命周期中通过 context 拿到
+
+	// 情况2: 跨组件调用--包含情况1
+  @Provide navPathStack: NavPathStack = new NavPathStack()
+  // @Consume('navPathStack') navPathStack: NavPathStack
 
 
 // 三个区域
-    // - 顶部：title + menus
-    // - 中间：content
-    // - 下面：工具栏
-    // 1个功能
-    // - 路由绑定 nacDestination
-    // NavPathStack - 路由操作
-    // 子组件
-    // - NavRouter：页面路由-必须包含两个子组件，其中第二个子组件必须为 NavDestination
-    // - NavDestination：作为子页面的根容器，用于显示Navigation的内容区。
-    Navigation(this.pageStack){
+    // - 顶部 Top：title + menus
+    // - 中间 Content: 直接写
+    // - 下面 Bot: tool 工具栏
+// 1个功能
+		// NavPathStack - 路由操作
+// 2个路由子组件-项目中使用后者
+    // - 1.1 路由绑定 .navDestination(){}
+		// - 1.2 路由绑定 navDestination(){}
+
+    // - 2 NavRouter（不常用）：页面路由-必须包含两个子组件，其中第二个子组件必须为 NavDestination
+    Navigation(this.navPathStack){
       /* 中间 */
       TextInput({ placeholder: 'search...' })
         .height(40)
@@ -759,7 +781,7 @@ toolbarList:ToolbarItem[] = [
       .margin({ top: 12, left: '10%' })
    }
     /* 标题栏 */
-    .title(this.NavigationTitle) // 可以为元素
+    .title(this.NavTitleBuilder) // 可以为元素
     // .menus(this.NavigationMenus) // 上边右侧菜单栏-可以为元素(2种方式)
     .menus(this.navigationMenusList)
     .titleMode(NavigationTitleMode.Full) // 标题显示模式
@@ -929,6 +951,11 @@ struct Sun{
 
 ```ts
 // 父和孙双向联动
+@Privode params: string = 'abc'
+@Privode('params') params: string = 'abc' // 可以重新命名key
+
+@Consume params: string
+@Consume('params') params: string
 ```
 
 - @Observed & @ObjectLink
