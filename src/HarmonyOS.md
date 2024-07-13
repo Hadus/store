@@ -443,6 +443,17 @@ c.foo('aa'); // OK，使用第二个签名
 
 #### Progress - 进度条
 
+#### AlphabetIndexer 
+
+- 定位元素位置
+- 用于通讯录部分
+
+#### NodeContainer 和 builderParam？
+
+#### Search - 搜索
+
+#### Textclock - 时间文本
+
 #### Toast - 弹窗-消失
 
 #### AlertDialog - 弹窗-不消失
@@ -453,7 +464,9 @@ c.foo('aa'); // OK，使用第二个签名
 
 - TextPickerDialog
 - DatePickerDialog
-- TimePickerDialog
+- TimePickerDialog 
+
+#### withTheme - 主题是否跟随系统
 
 #### 
 
@@ -560,49 +573,11 @@ Button('click').onClick(()=>{
 })
 ```
 
-#### layoutWeight 自适应伸缩
-
-- layoutWeight 会自动给 Coloum 添加 height('100%'), Row 添加 Width('100%')
-
-```
-Row(){
-  Text('left').backgroundColor(Color.Orange)
-    .layoutWeight(1)
-  Text('center').backgroundColor(Color.Gray)
-    .layoutWeight(2)										 	Text('right').width(60).backgroundColor(Color.Pink)
-}.width('100%').backgroundColor('#fff')
-```
-
-#### justifyContent 线性布局-flex的简化
-
-- 线性的简化，效率高
-
-- note: Coloum 必须有Height，Row 必须有 Width 才生效
-
-```ts
-// 主轴
-justifyContent(FlexAlign.SpaceEvenly)
-    Start:
-    Center:
-    End: 
-    SpaceBetween: 两边贴边
-    SpaceAround: 环绕-靠边间隙0.5
-    SpaceEvenly：环绕-靠边间隙1
-// 侧轴
-alignItems(HorizontalAlign.Start) // 水平-Colomn
-    Start:
-    Center:
-    End: 
-alignItems(VerticalAlign.Top) // 垂直-Row
-	Top:
-	Center:
-	Bottom:
-
-```
-
 
 
 #### Flex 伸缩布局
+
+- .flexShrink 设置子组件占比，为 0  时不会压缩
 
 ```
  Flex({
@@ -650,10 +625,12 @@ Grid(){
 #### ForEach 循环生成
 
 ```ts
+// 第三个参数为列表的 key，缺省时，每次更改数组哪怕是仅仅一个item，数组都会整体重建。
+// (item: number) => JSON.stringify(item) 作为 唯一标识 key
 ForEach(this.list, (ele:number, index) => {
   Text(`ele-${ele}-index-${index}`)
       .heigth(60).aspectRatio(1) // 宽高比
-})
+}, keyGenerator)
 ```
 
 
@@ -796,6 +773,117 @@ toolbarList:ToolbarItem[] = [
 
 
 
+#### Navigator - 路由跳转(和 router 功能一样)
+
+- 可以在子组件需要跳转的地方直接包裹
+
+#### refresh -下拉刷新
+
+#### formLink - 图片跳转 UIAbility
+
+#### rowSplit - 横向布局 - 可拖动
+
+#### columnSplit - 纵向布局 - 可拖动
+
+
+
+### 组件属性
+
+#### .size
+
+```ts
+.size({width: 10, height: 10})
+```
+
+#### .constraintSize
+
+```ts
+.constraintSize({minWidth: 10, maxWidth	: 10, minHeight: 10, maxHeight: 10})
+```
+
+#### .layoutWeight 自适应伸缩
+
+- layoutWeight 会自动给 Coloum 添加 height('100%'), Row 添加 Width('100%')
+
+```
+Row(){
+  Text('left').backgroundColor(Color.Orange)
+    .layoutWeight(1)
+  Text('center').backgroundColor(Color.Gray)
+    .layoutWeight(2)										 	Text('right').width(60).backgroundColor(Color.Pink)
+}.width('100%').backgroundColor('#fff')
+```
+
+#### .align 内部文字对其方式
+
+- Stack、FolderStack、Button、StepperItem中生效，
+- Marquee、text、TextArea、TextInput的align结果参考 textAlign
+- 在Stack中与alignContent效果一致，只能设置子组件在容器内的对齐方式。
+
+#### .justifyContent 内部线性布局-flex的简化
+
+#### .alignItems 内部侧轴
+
+#### .direction 内部主轴方向
+
+- 线性的简化，效率高
+
+- note: Coloum 必须有Height，Row 必须有 Width 才生效
+
+```ts
+// 主轴
+justifyContent(FlexAlign.SpaceEvenly)
+    Start:
+    Center:
+    End: 
+    SpaceBetween: 两边贴边
+    SpaceAround: 环绕-靠边间隙0.5
+    SpaceEvenly：环绕-靠边间隙1
+// 侧轴
+alignItems(HorizontalAlign.Start) // 水平-Colomn
+    Start:
+    Center:
+    End: 
+alignItems(VerticalAlign.Top) // 垂直-Row
+	Top:
+	Center:
+	Bottom:
+.direction() // 主轴方向
+
+```
+
+#### .alignSelf - 当前元素
+
+- Row 中 元素默认列中间，用来调整元素上下位置
+- Colomn 中 元素默认在行中间，用来调整元素左右位置
+
+#### .clip .clipShape 裁剪元素
+
+- 可在当border Radius不在内部Image生效时使用
+
+#### .overlay：浮层，不能设置颜色
+
+- 不遮挡 onClick
+
+#### .mask  .maskShape 遮罩
+
+- 用于图片或文件加载，mask传入一个progress
+- Mask 在 overlay上层
+- 不遮挡 onClick
+- 当 mask 范围小于元素时，会遮住超出部分
+
+#### .aspectRatio(1) 元素比例
+
+#### .foreground Color
+
+- 用circle测试
+
+####  .obscured 隐私遮罩
+
+#### .textRange 文字范围
+
+#### .id 元素 id
+
 ### 组件方法
 
 #### vp2px 
@@ -807,7 +895,7 @@ toolbarList:ToolbarItem[] = [
 
 ## 路径引用
 
-#### resources
+### resources
 
 ```ts
 // state 中---有问题
@@ -816,7 +904,7 @@ icon = "resources/base/media/app_icon.png"
 Image($r('app.media.app_icon'))
 ```
 
-#### ets/assets
+### ets/assets
 
 ```ts
 // 组件 中
@@ -825,7 +913,7 @@ Image($r('/assets/'))
 import interface from '../assets/'
 ```
 
-#### string.json
+### string.json
 
 ```ts
 // 组件中
@@ -854,7 +942,11 @@ toFixed()
 
 ## 状态变量
 
-```
+### @State
+
+### $$ 双向绑定
+
+```ts
 let test_outer:number = 1
 
 @Entry
@@ -1364,6 +1456,12 @@ this.webviewController.loadData(
 
 
 
+# 兼容 JS
+
+## JS Full
+
+## JS Lite
+
 # 应用程序框架 Ability Kit
 
 - 应用内交互、应用间交互、设备流转
@@ -1655,6 +1753,10 @@ export default class EntryAbility extends UIAbility {
   // ...
 }
 ```
+
+# i18n
+
+- i18n-Internationalization ,i 中间18位 n
 
 # 开发过程-example
 
