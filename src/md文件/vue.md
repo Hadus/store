@@ -1,7 +1,5 @@
 # vue2
 
-[TOC]
-
 ## 介绍
  > https://cn.vuejs.org/
 
