@@ -1,4 +1,5 @@
-#  vue2
+# vue2
+
 [TOC]
 
 ## 介绍
@@ -1839,7 +1840,7 @@ new Vue({
 })
 ```
 
-- - 
+
 
 # vue3
 
@@ -1985,6 +1986,7 @@ const emit = defineEmits(['change', 'delete'])
 
 ```javascript
 // 将setup中的普通数据变成响应式
+// ref 底层调用 reactive
 let name = ref('张三');
 
 // 响应式修改
@@ -2050,6 +2052,49 @@ p.sex = 'male';
 
 
 
+## v-model
+
+1. 用在表单组件
+
+```vue
+<input v-model="input"/>
+// 相当于
+<input :value="inputValue" @input="(e)=>{inputValue = e.target.value}"/>
+```
+
+
+
+2. 用在子组件
+
+```vue
+<son v-model="name"></son> // 默认绑定 modelValue
+<son v-model:name="name"></son>
+// 相当于
+<son :name="name" @update:name="emit('name', ...value)"></son>
+```
+
+3. 修饰符
+
+```vue
+// .lazy .number .trim
+// 自定义
+<son v-model.myModify="input"/>
+
+// son 组件中
+const [model, modifiers] = defineModel({
+// 首字母大写
+  set(value) {
+    if (modifiers.myModify) {
+      return value.charAt(0).toUpperCase() + value.slice(1)
+    }
+    return value
+  }
+})
+
+```
+
+
+
 ## slot
 
 - 只能用 `v-shot:left`
@@ -2080,9 +2125,13 @@ p.sex = 'male';
   		// 问题5:监视 const age = ref(1) 的age不能 x.value，因为监视的是结构不是值
   		// 问题6:监视 const person = ref({}) 时，需要person.value，或者开启deep
     watch(name, ()={});
-    watch([name, age], (newValue, oldValue)=>{}, {
+    watch([name, age], (newValue, oldValue, onCleanup)=>{
+        // onCleanup 用来清除每次调用的副作用
+        onCleanup()
+    }, {
       immediate: true,
-      deep: true
+      deep: true,
+      flush: 'post'|'sync' // post 时候相当于nextTick
     });
    const unwatch = watch(()=>person.name, (newValue, oldValue)=>{});
 		unwatch()
@@ -2094,12 +2143,20 @@ p.sex = 'male';
 
 ```javascript
 // watchEffect: 回调中所用到的变量都会触发回调，类似 computed
+	// 第一次也会执行，相当于 immediate: true,
  	// watchEffect(fn, gn)
 	// fn: 运行副作用的函数
 	// gn:调整副作用的刷新时机或调试副作用的依赖。
-    const stop = watchEffect(()=>{
+    const stop = watchEffect((onCleanup)=>{
       const a = name;
+        // onCleanup 用来清除每次调用的副作用
+        onCleanup()
+    }, {
+      immediate: true,
+      deep: true,
+      flush: 'post'|'sync'
     });
+// stop 关闭监听
 stop();
 ```
 
@@ -2148,6 +2205,10 @@ export default ()=>{
 - `toRefs(person)`
 
 # vue3 other compaine api
+
+## h()---生成一个VNode
+
+## render(VNode, 渲染到哪去)
 
 ## shallowReactive && shallowRef-浅层响应式
 
@@ -2526,6 +2587,7 @@ import obj_my1 {obj2 , obj4 as obj_my2} from 'index.js'
 - 直接调用，2个参数（回调函数和上下文），如果没有传入参数就作为promise使用
 - 在Vue生命周期的created()进行的DOM操作一定要放在this.$nextTick()的回调函数中
 - 在数据变化后要执行的某个操作，而这个操作需要使用随数据改变而操作的DOM结构的时候，这个操作都应该放进this.$nextTick()的回调函数中。
+- this.$nextTick(()=>{}); this.$nextTick().then(); await this.$nextTick()
 
 ## 组件传值
 - storage
