@@ -1,5 +1,7 @@
 # 数据类型
 
+## 基础类型
+
 ```ts
 let num: number = 1
 let str: string = 'a,b'
@@ -8,7 +10,7 @@ let what: number | string = '1'
 let gender: 'man' | 'woman' | 'secret'
 ```
 
-array
+## array
 
 ```ts
 let arr1: number[] = [1]
@@ -23,24 +25,55 @@ interface Strudent{
 let stuArr: Strudent[] = []
 ```
 
-元组tuple：有长度的数组
+## 元组tuple：有长度的数组
 
 ```ts
 let arr4:[string, number, boolean] = ['1',2,true]
+let arr5:[string, ...number[]]
 ```
 
-枚举enum：约束变量只能在一组范围内取值 
+## 枚举enum：约束变量只能在一组范围内取值 
 
 ```ts
+// 字符串枚举（无反向映射）
 enum Color {
-  Red = 'red',
-  Green = 'green',
-  Blue = 'blue',
+  Red = 'Red',
+  Green = 'Green',
+  Blue = 'Blue',
+}
+
+// 数字枚举：默认递增（有反向映射）
+enum Color {
+  Red,
+  Green,
+  Blue,
 }
 let myColor: Color = Color.Green;
+// ==>相当于
+enum Color {
+    Red=0,
+    Green=1,
+    Blue=2,
+    0='Red',
+    1='Green',
+    2='Blue'
+}
 ```
 
-void
+- 常量枚举 `const enum`
+  - 普通枚举TS编译后生成代码较大，可以使用常量枚举
+
+```ts
+const enum Color {
+  Red,
+  Green,
+  Blue,
+}
+```
+
+
+
+## void
 
 ```ts
 function logMessage(): void {
@@ -48,17 +81,17 @@ function logMessage(): void {
 }
 ```
 
-Any
+## Any
 
 `let a: any = 1;`
 
-null 和 undefined
+## null 和 undefined
 
 ```ts
 let n:null = null; let u:null = undefined
 ```
 
-Never: 永远不会发生的值的类型
+## Never: 永远不会发生的值的类型
 
 ```ts
 function throwError(message: string): never {
@@ -66,155 +99,59 @@ function throwError(message: string): never {
 }
 ```
 
-object
+## object
 
 ```
 
 ```
+
+# type：自定义类型
+
+```ts
+type num = number
+
+// 联合类型
+type NewsData = {
+  id: number | null
+  title: string
+  desc: string
+  status: number
+  type: number
+  source: string
+  target: string
+  createdTime?: string
+} | null
+
+type Gender = '男' | '女'
+
+// 交叉类型
+type User = {
+    name: string
+}
+type Address = {
+    room: string
+}
+type Person = User & Address
+const p1: Person = {
+    name: 'z'，
+    room: '1'
+}
+
+// 定义函数类型
+// 不接受参数的函数，当返回值为 void 时，TS 并不会严格要求返回值为空
+// 因为为了 arr1.forEach((item) => arr2.push(1)) 不出错
+// 因为箭头函数函数体只有一句，可以省略{}，但会默认被 return
+type LogFunc = () => void
+const fn:LogFunc = () => 555
+```
+
+
 
 
 
 # 类和继承 class和extends
 
 - class和extends
-
-# 抽象类 abstract
-
-- 可以给定确定的属性和方法，也可以不给定
-
-# 接口 interface
-
-1. 不能给定确定的属性和方法 
-2. 多次实现会取合集
-
-```ts
-// 接口-有格式的对象
-interface OBJ1 {
-  name: string,
-  age: number
-  handelRun: () => void
-}
-let obj1: OBJ1 = {
-  name: 'a',
-  age: 12,
-  handelRun(){
-    console.log('run--')
-  }
-}
-```
-
-## 接口-继承接口 extends
-
-```ts
-interface OBJ1 {
-  name: string,
-  age: number
-  handelRun: () => void
-}
-// 拥有上面三个属性
-interface Obj1 extends OBJ1{
-	color: string
-}
-```
-
-## 类-实现接口 implements 
-
-```ts
-// 类按照接口主体实现结构，并可以扩展
-class 类 implements 接口{
-    size: string = '18'
-}
-```
-
-
-
-# 泛型 广泛类型<T>
-
--  无法自动推断类型时 
--  通过传参方式来确定类型
-
-## 泛型函数
-
-```ts
-function fn<T>(params: T): T{
-	return params
-}
-
-fn<string>('123')
-fn('123') // 可以不写，ts自动通过参数判定，但最好写上
-fn<string[]>(['1'])
-```
-
-
-
-## 泛型约束
-
-```ts
-// 约束泛型的范围，T -至少- 包含 接口的结构
-function fn<T extends 接口>(): Void{}
-
-interface HasLength{
-    length: number
-}
-function fn<T extends HasLength>(params: T){}
-
-fn<string>('bcd')
-```
-
-
-
-## 多个泛型函数
-
-```ts
-function fn<T1, T2>(params1: T1, params2: T2){}
-
-fn<string, number[]>('bcd')
-```
-
-
-
-## 泛型接口
-
-```ts
-interface 接口<T1, T2>{
-    name: T1,
-    what: T2
-}
-let obj: 接口<number, string[]> = {
-    
-}
-```
-
-
-
-## 泛型类
-
-```ts
-class 类名<T>{
-    id: T
-    constructor(id: T){
-        this.id = id
-    }
-    getId:T(){
-        return this.id
-    }
-}
-let p = new 类名<number>(10)
-```
-
-
-
-# 断言 myVariable as string
-
-- 不确定变量的类型，用断言告诉系统
-
-# 命名空间 namespace
-
-- 就是模块，但不常用
-
-# 装饰器
-
-# 子类和父类方法
 
 ## 基础
 
@@ -272,7 +209,12 @@ class Son extends Father{
 }
 ```
 
+## interface & type 定义对象
 
+- interface 定义类
+- interface 可以继承和合并
+- type 可以定义类型别名
+- type 支持联合类型和交叉类型
 
 # 方法重载
 
@@ -290,6 +232,170 @@ c.foo(123);     // OK，使用第一个签名
 c.foo('aa'); // OK，使用第二个签名
 ```
 
-# 其他
+# 抽象类 abstract
 
-## type
+- 可以给定确定的属性和方法，也可以不给定
+- 就是为了被继承
+
+```ts
+abstract class Package {
+    name: '1',
+    abstract calc(): number
+}
+```
+
+# 接口 interface
+
+1. 不能给定确定的属性和方法，不能包含任何实现 
+2. 多次实现会取合集
+
+```ts
+// 接口-有格式的对象
+interface OBJ1 {
+  name: string,
+  age: number
+  handelRun: () => void
+}
+let obj1: OBJ1 = {
+  name: 'a',
+  age: 12,
+  handelRun(){
+    console.log('run--')
+  }
+}
+```
+
+## 接口-继承接口 extends
+
+```ts
+interface OBJ1 {
+  name: string,
+  age: number
+  handelRun: () => void
+}
+// 拥有上面三个属性
+interface Obj1 extends OBJ1{
+	color: string
+}
+```
+
+## 类-实现接口 implements 
+
+```ts
+// 类按照接口主体实现结构，并可以扩展
+class 类 implements 接口{
+    size: string = '18'
+}
+```
+
+## 类型校验使用-再次定义会合并
+
+```ts
+interface IInterface {
+  id: number | null
+  title: string
+  jump:()=>void
+}
+```
+
+## 接口可以继承接口
+
+```ts
+interface StudentInterface extends PersonInterface {}
+```
+
+## interface & type：类型校验时
+
+- interface 可以继承和合并
+
+- type 可以定义交叉类型和合并类型
+
+- 推荐使用interface
+
+- 使用方法一致
+
+  `import type { IInterface } from './type.js'`
+
+# 泛型 广泛类型<T>
+
+-  无法自动推断类型时 
+-  通过传参方式来确定类型
+
+## 泛型函数
+
+```ts
+function fn<T>(params: T): T{
+	return params
+}
+
+fn<string>('123')
+fn('123') // 可以不写，ts自动通过参数判定，但最好写上
+fn<string[]>(['1'])
+```
+
+## 泛型约束
+
+```ts
+// 约束泛型的范围，T -至少- 包含 接口的结构
+function fn<T extends 接口>(): Void{}
+
+interface HasLength{
+    length: number
+}
+function fn<T extends HasLength>(params: T){}
+
+fn<string>('bcd')
+```
+
+## 多个泛型函数
+
+```ts
+function fn<T1, T2>(params1: T1, params2: T2){}
+
+fn<string, number[]>('bcd')
+```
+
+## 泛型接口
+
+```ts
+interface 接口<T1, T2>{
+    name: T1,
+    what: T2
+}
+let obj: 接口<number, string[]> = {
+    
+}
+```
+
+## 泛型类
+
+```ts
+class 类名<T>{
+    id: T
+    constructor(id: T){
+        this.id = id
+    }
+    getId:T(){
+        return this.id
+    }
+}
+let p = new 类名<number>(10)
+```
+
+
+
+# 断言 myVariable as string
+
+- 不确定变量的类型，用断言告诉系统
+
+# declare
+
+- 类型定义文件：.d.ts 中使用
+- 设置为TS的全局
+
+# 命名空间 namespace
+
+- 就是模块，但不常用
+
+# 装饰器
+
